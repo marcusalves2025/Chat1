@@ -1,0 +1,1616 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OptivusIA – Assistente Inteligente</title>
+  <meta name="description" content="OptivusIA - Seu assistente de IA de alta performance, versão completa em HTML, CSS e JS.">
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #22c55e;
+      --accent-hover: #16a34a;
+      --border: #334155;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --gradient: linear-gradient(135deg, #22c55e, #3b82f6, #8b5cf6);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .topbar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: var(--gradient);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .badge {
+      background: var(--accent);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    select {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    button {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    button:hover {
+      background: var(--border);
+      transform: translateY(-1px);
+    }
+
+    button.accent {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    button.accent:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button.ghost {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .layout {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .history {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .history-item {
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .history-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .history-item.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 80%;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .message.user .message-avatar {
+      background: var(--accent);
+      color: white;
+    }
+
+    .message.assistant .message-avatar {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .message-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .message.user .message-content {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 16px;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typing {
+      0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .composer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-container {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    textarea {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 60px 16px 16px;
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 1.4;
+      resize: none;
+      outline: none;
+      min-height: 24px;
+      max-height: 120px;
+      flex: 1;
+    }
+
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input-actions {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .input-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+
+    .input-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      transform: none;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .heart {
+      color: #ef4444;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .small {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    code {
+      background: var(--bg-tertiary);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state h2 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      background: var(--gradient);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease-in-out infinite;
+    }
+
+    .suggestions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+      max-width: 600px;
+    }
+
+    .suggestion {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .suggestion:hover {
+      background: var(--bg-tertiary);
+      transform: translateY(-2px);
+    }
+
+    .suggestion strong {
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .search-results {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+
+    .search-source {
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .search-snippet {
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 0;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .file-upload {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .file-upload:hover {
+      border-color: var(--accent);
+      background: var(--bg-tertiary);
+    }
+
+    .file-upload.dragover {
+      border-color: var(--accent);
+      background: var(--bg-tertiary);
+    }
+
+    .uploaded-files {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .file-tag {
+      background: var(--accent);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .file-remove {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        max-height: 200px;
+        order: 2;
+      }
+      
+      .chat {
+        order: 1;
+      }
+      
+      .topbar {
+        padding: 8px 16px;
+      }
+      
+      .brand {
+        gap: 8px;
+      }
+      
+      .title {
+        font-size: 1rem;
+      }
+
+      .input-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .input-actions {
+        position: static;
+        justify-content: center;
+        margin-top: 8px;
+      }
+
+      textarea {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">⚡</span>
+      <span class="title">OptivusIA</span>
+      <span class="badge">Alta Performance</span>
+    </div>
+    <div class="controls">
+      <select id="modeSelect" title="Modo de resposta">
+        <option value="balanced">Equilibrado</option>
+        <option value="precise">Preciso</option>
+        <option value="creative">Criativo</option>
+      </select>
+      <button id="themeBtn" aria-label="Alternar tema">🌓</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <button id="newChatBtn" class="accent">+ Novo chat</button>
+      <div class="sidebar-section">
+        <div class="section-title">Histórico</div>
+        <ul id="historyList" class="history"></ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-title">Arquivo</div>
+        <button id="exportBtn">📥 Exportar .txt</button>
+        <button id="clearBtn">🗑️ Limpar chat</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-title">Status da API</div>
+        <div id="apiStatus" class="small" style="color: var(--accent);">
+          🟢 OpenAI Conectado
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-title">Sobre</div>
+        <p class="small">
+          OptivusIA é seu assistente de IA de alta performance. Agora integrado com OpenAI GPT para respostas reais e inteligentes!
+        </p>
+      </div>
+    </aside>
+
+    <section class="chat">
+      <div id="messages" class="messages" role="log" aria-live="polite">
+        <div class="empty-state">
+          <h2>👋 Bem-vindo ao OptivusIA!</h2>
+          <p>Seu assistente inteligente de alta performance está pronto para ajudar.</p>
+          <div class="suggestions">
+            <div class="suggestion" onclick="sendSuggestion('Pesquise sobre inteligência artificial no Google')">
+              <strong>🔍 Busca Avançada</strong>
+              <small>Pesquise informações atualizadas</small>
+            </div>
+            <div class="suggestion" onclick="sendSuggestion('Me ajude a criar um plano de estudos eficaz')">
+              <strong>📚 Plano de Estudos</strong>
+              <small>Preciso organizar meus estudos</small>
+            </div>
+            <div class="suggestion" onclick="sendSuggestion('Sugira uma receita saudável e fácil de fazer')">
+              <strong>🍳 Receita Saudável</strong>
+              <small>Quero cozinhar algo nutritivo</small>
+            </div>
+            <div class="suggestion" onclick="sendSuggestion('Conte uma curiosidade científica interessante')">
+              <strong>🌟 Curiosidade</strong>
+              <small>Me surpreenda com algo novo</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="composer" class="composer">
+        <div class="input-container">
+          <textarea id="input" rows="1" placeholder="Escreva sua mensagem... (Shift+Enter para quebrar linha)"></textarea>
+          <div class="input-actions">
+            <button type="button" id="advancedSearchBtn" class="input-btn" title="Pesquisa Avançada">🔍</button>
+            <button type="button" id="attachBtn" class="input-btn" title="Anexar Mídia">📎</button>
+          </div>
+        </div>
+        <div class="buttons">
+          <button type="button" id="stopBtn" class="ghost" disabled>⏹️ Parar</button>
+          <button type="submit" id="sendBtn" class="accent">Enviar ▶</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Advanced Search Modal -->
+  <div id="advancedSearchModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">🔍 Pesquisa Avançada</h3>
+        <button class="close-btn" onclick="closeModal('advancedSearchModal')">&times;</button>
+      </div>
+      <form id="advancedSearchForm">
+        <div class="form-group">
+          <label class="form-label">Termo de busca</label>
+          <input type="text" id="searchTerm" class="form-input" placeholder="Digite o que deseja pesquisar..." required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fonte preferida</label>
+          <select id="searchSource" class="form-input">
+            <option value="all">Todas as fontes</option>
+            <option value="academic">Artigos acadêmicos</option>
+            <option value="news">Notícias</option>
+            <option value="wikipedia">Wikipedia</option>
+            <option value="government">Sites governamentais</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Período</label>
+          <select id="searchPeriod" class="form-input">
+            <option value="any">Qualquer período</option>
+            <option value="day">Último dia</option>
+            <option value="week">Última semana</option>
+            <option value="month">Último mês</option>
+            <option value="year">Último ano</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Idioma</label>
+          <select id="searchLanguage" class="form-input">
+            <option value="pt">Português</option>
+            <option value="en">Inglês</option>
+            <option value="es">Espanhol</option>
+            <option value="fr">Francês</option>
+          </select>
+        </div>
+        <button type="submit" class="accent" style="width: 100%; margin-top: 16px;">🔍 Pesquisar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Attach Media Modal -->
+  <div id="attachModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">📎 Anexar Mídia</h3>
+        <button class="close-btn" onclick="closeModal('attachModal')">&times;</button>
+      </div>
+      <div class="file-upload" id="fileUpload">
+        <div>📁 Clique aqui ou arraste arquivos</div>
+        <small>Suporte: Imagens (JPG, PNG, GIF), Vídeos (MP4, AVI), Documentos (PDF, DOC)</small>
+        <input type="file" id="fileInput" multiple accept="image/*,video/*,.pdf,.doc,.docx" style="display: none;">
+      </div>
+      <div id="uploadedFiles" class="uploaded-files"></div>
+      <button id="attachConfirm" class="accent" style="width: 100%; margin-top: 16px;" disabled>✅ Confirmar Anexos</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div>Feito com <span class="heart">❤</span> em HTML, CSS e JS puros • OptivusIA v2.0</div>
+  </footer>
+
+  <script>
+    // CONFIGURAÇÕES DA API
+    const API_KEY = "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";
+    const API_URL = "https://api.openai.com/v1/chat/completions";
+    const MODEL = "gpt-3.5-turbo"; // pode trocar por "gpt-4" se tiver acesso
+
+    // Global state
+    let currentChatId = null;
+    let chats = {};
+    let isGenerating = false;
+    let currentController = null;
+    let attachedFiles = [];
+    let conversationHistory = []; // Para manter contexto da conversa
+
+    // DOM elements
+    const messagesContainer = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const modeSelect = document.getElementById('modeSelect');
+    const themeBtn = document.getElementById('themeBtn');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const historyList = document.getElementById('historyList');
+    const exportBtn = document.getElementById('exportBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const composer = document.getElementById('composer');
+    const advancedSearchBtn = document.getElementById('advancedSearchBtn');
+    const attachBtn = document.getElementById('attachBtn');
+
+    // Simulated search database
+    const searchDatabase = {
+      'inteligência artificial': {
+        sources: [
+          { title: 'O que é Inteligência Artificial - MIT Technology Review', snippet: 'A inteligência artificial é uma tecnologia que permite às máquinas simular a inteligência humana através de algoritmos complexos...', url: 'https://technologyreview.com' },
+          { title: 'IA no Brasil: Perspectivas e Desafios - Nature', snippet: 'O desenvolvimento da IA no Brasil apresenta oportunidades únicas, especialmente em áreas como agricultura e saúde...', url: 'https://nature.com' }
+        ]
+      },
+      'machine learning': {
+        sources: [
+          { title: 'Fundamentos do Machine Learning - Stanford AI', snippet: 'Machine Learning é um subcampo da IA que permite aos computadores aprender sem serem explicitamente programados...', url: 'https://ai.stanford.edu' },
+          { title: 'Aplicações Práticas de ML - Google Research', snippet: 'As aplicações de machine learning estão revolucionando indústrias desde medicina até transporte autônomo...', url: 'https://research.google.com' }
+        ]
+      },
+      'programação': {
+        sources: [
+          { title: 'Guia Completo de Programação - Stack Overflow', snippet: 'Programação é a arte de criar instruções para computadores. Python, JavaScript e Java são linguagens populares...', url: 'https://stackoverflow.com' },
+          { title: 'Tendências em Desenvolvimento - GitHub', snippet: 'As linguagens de programação mais populares em 2024 incluem Python, JavaScript, TypeScript e Rust...', url: 'https://github.com' }
+        ]
+      },
+      'saúde': {
+        sources: [
+          { title: 'Avanços em Medicina Digital - OMS', snippet: 'A medicina digital está transformando o cuidado de saúde com telemedicina, IA diagnóstica e wearables...', url: 'https://who.int' },
+          { title: 'Pesquisas em Biotecnologia - Nature Medicine', snippet: 'Novas terapias genéticas e medicina personalizada prometem revolucionar tratamentos médicos...', url: 'https://nature.com/nm' }
+        ]
+      },
+      'clima': {
+        sources: [
+          { title: 'Mudanças Climáticas Globais - IPCC', snippet: 'O relatório mais recente do IPCC confirma que as mudanças climáticas estão acelerando...', url: 'https://ipcc.ch' },
+          { title: 'Soluções Sustentáveis - NASA Climate', snippet: 'Tecnologias verdes e energias renováveis são essenciais para combater o aquecimento global...', url: 'https://climate.nasa.gov' }
+        ]
+      }
+    };
+
+    // Initialize
+    function init() {
+      loadTheme();
+      createNewChat();
+      setupEventListeners();
+      autoResizeTextarea();
+    }
+
+    // Event listeners
+    function setupEventListeners() {
+      composer.addEventListener('submit', handleSubmit);
+      input.addEventListener('keydown', handleKeyDown);
+      input.addEventListener('input', autoResizeTextarea);
+      stopBtn.addEventListener('click', stopGeneration);
+      themeBtn.addEventListener('click', toggleTheme);
+      newChatBtn.addEventListener('click', createNewChat);
+      exportBtn.addEventListener('click', exportChat);
+      clearBtn.addEventListener('click', clearCurrentChat);
+      advancedSearchBtn.addEventListener('click', openAdvancedSearch);
+      attachBtn.addEventListener('click', openAttachModal);
+      
+      // Advanced search form
+      document.getElementById('advancedSearchForm').addEventListener('submit', handleAdvancedSearch);
+      
+      // File upload
+      const fileUpload = document.getElementById('fileUpload');
+      const fileInput = document.getElementById('fileInput');
+      
+      fileUpload.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', handleFileSelect);
+      
+      // Drag and drop
+      fileUpload.addEventListener('dragover', handleDragOver);
+      fileUpload.addEventListener('drop', handleFileDrop);
+      
+      document.getElementById('attachConfirm').addEventListener('click', confirmAttachments);
+    }
+
+    // Auto-resize textarea
+    function autoResizeTextarea() {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    }
+
+    // Handle form submission
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const message = input.value.trim();
+      if (!message || isGenerating) return;
+
+      // Add attached files info to message if any
+      let fullMessage = message;
+      if (attachedFiles.length > 0) {
+        fullMessage += '\n\n📎 Arquivos anexados: ' + attachedFiles.map(f => f.name).join(', ');
+      }
+
+      addMessage('user', fullMessage);
+      input.value = '';
+      autoResizeTextarea();
+      
+      // Clear attachments after sending
+      attachedFiles = [];
+      updateAttachedFilesDisplay();
+      
+      await generateResponse(message);
+    }
+
+    // Handle keyboard shortcuts
+    function handleKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        composer.dispatchEvent(new Event('submit'));
+      }
+    }
+
+    // Add message to chat
+    function addMessage(role, content, typing = false, searchResults = null) {
+      hideEmptyState();
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = role === 'user' ? '👤' : '⚡';
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      
+      if (typing) {
+        contentDiv.innerHTML = '<div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+      } else {
+        contentDiv.textContent = content;
+        
+        // Add search results if available
+        if (searchResults && searchResults.length > 0) {
+          const resultsDiv = document.createElement('div');
+          resultsDiv.className = 'search-results';
+          resultsDiv.innerHTML = '<div class="search-source">🔍 Fontes encontradas:</div>';
+          
+          searchResults.forEach(result => {
+            const resultItem = document.createElement('div');
+            resultItem.style.marginBottom = '8px';
+            resultItem.innerHTML = `
+              <div class="search-source">${result.title}</div>
+              <div class="search-snippet">${result.snippet}</div>
+            `;
+            resultsDiv.appendChild(resultItem);
+          });
+          
+          contentDiv.appendChild(resultsDiv);
+        }
+      }
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(contentDiv);
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      // Save to current chat
+      if (currentChatId && !typing) {
+        if (!chats[currentChatId].messages) {
+          chats[currentChatId].messages = [];
+        }
+        chats[currentChatId].messages.push({ 
+          role, 
+          content, 
+          timestamp: new Date().toISOString(),
+          searchResults: searchResults || null
+        });
+        updateChatTitle();
+        updateHistoryList();
+      }
+      
+      return messageDiv;
+    }
+
+    // Hide empty state
+    function hideEmptyState() {
+      const emptyState = messagesContainer.querySelector('.empty-state');
+      if (emptyState) {
+        emptyState.style.display = 'none';
+      }
+    }
+
+    // Generate AI response using OpenAI API
+    async function generateResponse(userMessage) {
+      isGenerating = true;
+      sendBtn.disabled = true;
+      stopBtn.disabled = false;
+      
+      const typingMessage = addMessage('assistant', '', true);
+      
+      // Add user message to conversation history
+      conversationHistory.push({ role: "user", content: userMessage });
+      
+      // Check if it's a search request
+      const isSearchRequest = userMessage.toLowerCase().includes('pesquise') || 
+                             userMessage.toLowerCase().includes('busque') || 
+                             userMessage.toLowerCase().includes('procure') ||
+                             userMessage.toLowerCase().includes('google');
+      
+      let searchResults = null;
+      let response = '';
+      
+      try {
+        if (isSearchRequest) {
+          // Handle search requests with simulated results + AI response
+          const searchTerms = extractSearchTerms(userMessage);
+          searchResults = performSearch(searchTerms);
+          
+          // Create a context-aware prompt for search
+          const searchPrompt = `O usuário está pedindo uma pesquisa sobre "${searchTerms}". Forneça uma resposta informativa e detalhada sobre este tópico, como se fosse um assistente de IA especializado. Modo atual: ${modeSelect.value}`;
+          
+          const apiResponse = await callOpenAI([{ role: "user", content: searchPrompt }]);
+          response = apiResponse;
+        } else {
+          // Regular conversation with context
+          const systemPrompt = getSystemPrompt();
+          const messages = [
+            { role: "system", content: systemPrompt },
+            ...conversationHistory.slice(-10) // Keep last 10 messages for context
+          ];
+          
+          response = await callOpenAI(messages);
+        }
+        
+        // Add AI response to conversation history
+        conversationHistory.push({ role: "assistant", content: response });
+        
+        // Keep conversation history manageable (last 20 messages)
+        if (conversationHistory.length > 20) {
+          conversationHistory = conversationHistory.slice(-20);
+        }
+        
+        // Update API status on success
+        updateAPIStatus(true);
+        
+      } catch (error) {
+        console.error('Erro na API:', error);
+        updateAPIStatus(false);
+        response = getFallbackResponse(userMessage);
+      }
+      
+      if (!isGenerating) return; // Stopped
+      
+      // Remove typing indicator
+      typingMessage.remove();
+      
+      // Type the response
+      await typeMessage(response, searchResults);
+      
+      isGenerating = false;
+      sendBtn.disabled = false;
+      stopBtn.disabled = true;
+      input.focus();
+    }
+
+    // Call OpenAI API
+    async function callOpenAI(messages) {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: messages,
+          max_tokens: 1000,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.choices && data.choices.length > 0) {
+        return data.choices[0].message.content;
+      } else {
+        throw new Error('Resposta inválida da API');
+      }
+    }
+
+    // Get system prompt based on current mode
+    function getSystemPrompt() {
+      const mode = modeSelect.value;
+      const prompts = {
+        balanced: "Você é o OptivusIA, um assistente de IA de alta performance. Seja útil, informativo e equilibrado em suas respostas. Mantenha um tom profissional mas amigável. Responda sempre em português brasileiro.",
+        precise: "Você é o OptivusIA em modo preciso. Forneça respostas objetivas, factuais e bem estruturadas. Use dados específicos quando possível. Seja conciso mas completo. Responda sempre em português brasileiro.",
+        creative: "Você é o OptivusIA em modo criativo! Seja imaginativo, use emojis, metáforas e linguagem expressiva. Torne suas respostas envolventes e inspiradoras, mas sempre úteis. Responda sempre em português brasileiro com muito entusiasmo!"
+      };
+      
+      return prompts[mode] || prompts.balanced;
+    }
+
+    // Fallback response when API fails
+    function getFallbackResponse(userMessage) {
+      const mode = modeSelect.value;
+      const fallbacks = {
+        balanced: "Desculpe, estou com dificuldades para me conectar no momento. Mas posso tentar ajudar com base no que você perguntou. Poderia reformular sua pergunta?",
+        precise: "Erro de conectividade detectado. Sistema operando em modo offline limitado. Reenvie a consulta para nova tentativa.",
+        creative: "🤖💫 Ops! Meus circuitos estão meio embaralhados agora! Que tal tentarmos novamente? Estou ansioso para ajudar você! ✨"
+      };
+      
+      return fallbacks[mode] || fallbacks.balanced;
+    }
+
+    // Update API status indicator
+    function updateAPIStatus(isConnected) {
+      const statusElement = document.getElementById('apiStatus');
+      if (isConnected) {
+        statusElement.innerHTML = '🟢 OpenAI Conectado';
+        statusElement.style.color = 'var(--accent)';
+      } else {
+        statusElement.innerHTML = '🔴 API Desconectada';
+        statusElement.style.color = '#ef4444';
+      }
+    }
+
+    // Extract search terms from user message
+    function extractSearchTerms(message) {
+      const msg = message.toLowerCase();
+      
+      // Remove search command words
+      let cleanMsg = msg.replace(/pesquise|busque|procure|sobre|no google|google/g, '').trim();
+      
+      // Look for specific terms in our database
+      for (let term in searchDatabase) {
+        if (cleanMsg.includes(term)) {
+          return term;
+        }
+      }
+      
+      // Return the cleaned message as search term
+      return cleanMsg || 'informações gerais';
+    }
+
+    // Perform search in simulated database
+    function performSearch(searchTerm) {
+      // Direct match
+      if (searchDatabase[searchTerm]) {
+        return searchDatabase[searchTerm].sources;
+      }
+      
+      // Partial match
+      for (let term in searchDatabase) {
+        if (searchTerm.includes(term) || term.includes(searchTerm)) {
+          return searchDatabase[term].sources;
+        }
+      }
+      
+      // Default results for unknown terms
+      return [
+        {
+          title: `Resultados sobre "${searchTerm}" - Pesquisa Simulada`,
+          snippet: `Encontrei informações relevantes sobre ${searchTerm}. Esta é uma demonstração de como o OptivusIA integraria com fontes reais de pesquisa.`,
+          url: 'https://example.com'
+        }
+      ];
+    }
+
+    // Generate search response
+    function generateSearchResponse(searchTerm, results) {
+      const mode = modeSelect.value;
+      
+      const responses = {
+        balanced: `Encontrei informações interessantes sobre "${searchTerm}"! Com base nas fontes pesquisadas, posso te dar um resumo abrangente do tema. As informações mais recentes indicam desenvolvimentos significativos nesta área.`,
+        precise: `Pesquisa executada para: "${searchTerm}"\n\nResultados obtidos de ${results.length} fonte(s) confiável(is). Dados compilados e verificados para precisão factual.`,
+        creative: `🔍 Que aventura de descoberta sobre "${searchTerm}"! ✨ Mergulhei no oceano digital e trouxe tesouros de conhecimento fresquinhos para você! 🌊 As fontes sussurraram segredos fascinantes que vou compartilhar!`
+      };
+      
+      return responses[mode] || responses.balanced;
+    }
+
+    // Type message with animation
+    async function typeMessage(text, searchResults = null) {
+      const messageDiv = addMessage('assistant', '', false, searchResults);
+      const contentDiv = messageDiv.querySelector('.message-content');
+      
+      // Clear content but keep search results
+      const searchResultsDiv = contentDiv.querySelector('.search-results');
+      contentDiv.textContent = '';
+      
+      for (let i = 0; i < text.length; i++) {
+        if (!isGenerating) break; // Stopped
+        
+        contentDiv.textContent += text.charAt(i);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        await new Promise(resolve => setTimeout(resolve, 20 + Math.random() * 30));
+      }
+      
+      // Re-add search results after typing
+      if (searchResultsDiv) {
+        contentDiv.appendChild(searchResultsDiv);
+      }
+      
+      // Update the saved message with complete text
+      if (currentChatId && chats[currentChatId].messages) {
+        const lastMessage = chats[currentChatId].messages[chats[currentChatId].messages.length - 1];
+        if (lastMessage && lastMessage.role === 'assistant') {
+          lastMessage.content = text;
+        }
+      }
+    }
+
+    // Get AI response based on message and mode (existing function with enhancements)
+    function getAIResponse(message, mode) {
+      const msg = message.toLowerCase();
+      const modeResponses = {
+        balanced: {
+          greetings: [
+            "Olá! É um prazer conversar com você. Como posso ajudar hoje?",
+            "Oi! Estou aqui para ajudar. O que você gostaria de saber?",
+            "Olá! Pronto para uma conversa interessante. Em que posso ser útil?"
+          ],
+          ai: [
+            "A inteligência artificial é fascinante! É uma tecnologia que permite que máquinas simulem a inteligência humana através de algoritmos que processam dados, identificam padrões e tomam decisões. Os principais tipos incluem machine learning, deep learning e redes neurais. É como ensinar um computador a 'pensar' analisando milhões de exemplos!",
+            "IA é incrível! Funciona ensinando máquinas a reconhecer padrões como nós fazemos. Ela aprende com dados, identifica tendências e faz previsões. É usada em tudo: desde recomendações do Netflix até carros autônomos!"
+          ],
+          default: [
+            `Interessante pergunta sobre "${message.substring(0, 20)}..."! Como OptivusIA, posso ajudar com análises, sugestões e informações sobre diversos tópicos. Poderia elaborar mais sobre o que especificamente você gostaria de saber?`,
+            `Sobre "${message.substring(0, 15)}...", posso oferecer diferentes perspectivas. O que mais te interessa: aspectos práticos, teóricos ou criativos do assunto?`
+          ]
+        },
+        precise: {
+          greetings: ["Olá. Estou operando em modo preciso. Como posso fornecer informações específicas hoje?"],
+          ai: ["Inteligência Artificial: Sistema computacional que simula processos cognitivos humanos através de algoritmos de aprendizado de máquina, processamento de linguagem natural e redes neurais artificiais."],
+          default: [`Consulta registrada: "${message.substring(0, 30)}..."\n\nPara resposta otimizada, especifique contexto e nível de detalhamento desejado.`]
+        },
+        creative: {
+          greetings: ["🎨 Olá, ser criativo! Que aventura intelectual vamos embarcar hoje? Estou transbordando de ideias!"],
+          ai: ["🤖✨ Imagine a IA como uma sinfonia digital! Cada algoritmo é um músico, cada dado uma nota musical. Juntos, criam uma melodia de inteligência que dança entre zeros e uns!"],
+          default: [`🎭 Que pergunta fascinante sobre "${message.substring(0, 20)}..."! Minha mente criativa está fervilhando de possibilidades! ✨`]
+        }
+      };
+      
+      const responses = modeResponses[mode] || modeResponses.balanced;
+      
+      if (msg.includes('olá') || msg.includes('oi') || msg.includes('hello')) {
+        return responses.greetings[Math.floor(Math.random() * responses.greetings.length)];
+      }
+      
+      if (msg.includes('inteligência artificial') || msg.includes('ia') || msg.includes('machine learning')) {
+        return responses.ai[Math.floor(Math.random() * responses.ai.length)];
+      }
+      
+      return responses.default[Math.floor(Math.random() * responses.default.length)];
+    }
+
+    // Advanced Search Modal Functions
+    function openAdvancedSearch() {
+      document.getElementById('advancedSearchModal').classList.add('active');
+    }
+
+    function handleAdvancedSearch(e) {
+      e.preventDefault();
+      
+      const searchTerm = document.getElementById('searchTerm').value;
+      const source = document.getElementById('searchSource').value;
+      const period = document.getElementById('searchPeriod').value;
+      const language = document.getElementById('searchLanguage').value;
+      
+      // Create advanced search message
+      const searchMessage = `Pesquisa avançada: "${searchTerm}" (Fonte: ${source}, Período: ${period}, Idioma: ${language})`;
+      
+      // Close modal
+      closeModal('advancedSearchModal');
+      
+      // Add to input and send
+      input.value = searchMessage;
+      composer.dispatchEvent(new Event('submit'));
+    }
+
+    // Attach Media Modal Functions
+    function openAttachModal() {
+      document.getElementById('attachModal').classList.add('active');
+      updateAttachedFilesDisplay();
+    }
+
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      addFilesToAttachments(files);
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('dragover');
+    }
+
+    function handleFileDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
+      
+      const files = Array.from(e.dataTransfer.files);
+      addFilesToAttachments(files);
+    }
+
+    function addFilesToAttachments(files) {
+      files.forEach(file => {
+        if (file.size <= 10 * 1024 * 1024) { // 10MB limit
+          attachedFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file
+          });
+        } else {
+          alert(`Arquivo ${file.name} é muito grande (máximo 10MB)`);
+        }
+      });
+      
+      updateAttachedFilesDisplay();
+    }
+
+    function updateAttachedFilesDisplay() {
+      const container = document.getElementById('uploadedFiles');
+      const confirmBtn = document.getElementById('attachConfirm');
+      
+      container.innerHTML = '';
+      
+      attachedFiles.forEach((file, index) => {
+        const fileTag = document.createElement('div');
+        fileTag.className = 'file-tag';
+        fileTag.innerHTML = `
+          ${getFileIcon(file.type)} ${file.name}
+          <button class="file-remove" onclick="removeFile(${index})">&times;</button>
+        `;
+        container.appendChild(fileTag);
+      });
+      
+      confirmBtn.disabled = attachedFiles.length === 0;
+    }
+
+    function getFileIcon(type) {
+      if (type.startsWith('image/')) return '🖼️';
+      if (type.startsWith('video/')) return '🎥';
+      if (type.includes('pdf')) return '📄';
+      if (type.includes('doc')) return '📝';
+      return '📁';
+    }
+
+    function removeFile(index) {
+      attachedFiles.splice(index, 1);
+      updateAttachedFilesDisplay();
+    }
+
+    function confirmAttachments() {
+      closeModal('attachModal');
+      
+      if (attachedFiles.length > 0) {
+        const fileNames = attachedFiles.map(f => f.name).join(', ');
+        input.value += `\n📎 Anexos: ${fileNames}`;
+        autoResizeTextarea();
+      }
+    }
+
+    // Modal utility functions
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Make removeFile globally accessible
+    window.removeFile = removeFile;
+
+    // Stop generation
+    function stopGeneration() {
+      isGenerating = false;
+      sendBtn.disabled = false;
+      stopBtn.disabled = true;
+      
+      const typingMessage = messagesContainer.querySelector('.message.assistant .typing');
+      if (typingMessage) {
+        typingMessage.closest('.message').remove();
+      }
+    }
+
+    // Theme management
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // Chat management functions (existing code)
+    function createNewChat() {
+      const chatId = 'chat_' + Date.now();
+      chats[chatId] = {
+        id: chatId,
+        title: 'Nova Conversa',
+        created: new Date().toISOString(),
+        messages: []
+      };
+      
+      // Reset conversation history for new chat
+      conversationHistory = [];
+      
+      switchToChat(chatId);
+      updateHistoryList();
+    }
+
+    function switchToChat(chatId) {
+      currentChatId = chatId;
+      
+      // Load conversation history for this chat
+      const chat = chats[chatId];
+      if (chat && chat.messages) {
+        conversationHistory = chat.messages
+          .filter(msg => msg.role === 'user' || msg.role === 'assistant')
+          .map(msg => ({ role: msg.role, content: msg.content }))
+          .slice(-20); // Keep last 20 messages
+      } else {
+        conversationHistory = [];
+      }
+      
+      loadChatMessages(chatId);
+      updateHistoryList();
+    }
+
+    function loadChatMessages(chatId) {
+      messagesContainer.innerHTML = '';
+      
+      const chat = chats[chatId];
+      if (!chat || !chat.messages || chat.messages.length === 0) {
+        showEmptyState();
+        return;
+      }
+      
+      chat.messages.forEach(msg => {
+        addMessageWithoutSaving(msg.role, msg.content, msg.searchResults);
+      });
+    }
+
+    function addMessageWithoutSaving(role, content, searchResults = null) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      avatar.textContent = role === 'user' ? '👤' : '⚡';
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      contentDiv.textContent = content;
+      
+      // Add search results if available
+      if (searchResults && searchResults.length > 0) {
+        const resultsDiv = document.createElement('div');
+        resultsDiv.className = 'search-results';
+        resultsDiv.innerHTML = '<div class="search-source">🔍 Fontes encontradas:</div>';
+        
+        searchResults.forEach(result => {
+          const resultItem = document.createElement('div');
+          resultItem.style.marginBottom = '8px';
+          resultItem.innerHTML = `
+            <div class="search-source">${result.title}</div>
+            <div class="search-snippet">${result.snippet}</div>
+          `;
+          resultsDiv.appendChild(resultItem);
+        });
+        
+        contentDiv.appendChild(resultsDiv);
+      }
+      
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(contentDiv);
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function showEmptyState() {
+      messagesContainer.innerHTML = `
+        <div class="empty-state">
+          <h2>👋 Bem-vindo ao OptivusIA!</h2>
+          <p>Seu assistente inteligente de alta performance está pronto para ajudar.</p>
+          <div class="suggestions">
+            <div class="suggestion" onclick="sendSuggestion('Pesquise sobre inteligência artificial no Google')">
+              <strong>🔍 Busca Avançada</strong>
+              <small>Pesquise informações atualizadas</small>
+            </div>
+            <div class="suggestion" onclick="sendSuggestion('Me ajude a criar um plano de estudos eficaz')">
+              <strong>📚 Plano de Estudos</strong>
+              <small>Preciso organizar meus estudos</small>
+            </div>
+            <div class="suggestion" onclick="sendSuggestion('Sugira uma receita saudável e fácil de fazer')">
+              <strong>🍳 Receita Saudável</strong>
+              <small>Quero cozinhar algo nutritivo</small>
+            </div>
+            <div class="suggestion" onclick="sendSuggestion('Conte uma curiosidade científica interessante')">
+              <strong>🌟 Curiosidade</strong>
+              <small>Me surpreenda com algo novo</small>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateChatTitle() {
+      if (!currentChatId || !chats[currentChatId]) return;
+      
+      const chat = chats[currentChatId];
+      if (chat.messages && chat.messages.length > 0 && chat.title === 'Nova Conversa') {
+        const firstUserMessage = chat.messages.find(msg => msg.role === 'user');
+        if (firstUserMessage) {
+          chat.title = firstUserMessage.content.substring(0, 30) + (firstUserMessage.content.length > 30 ? '...' : '');
+        }
+      }
+    }
+
+    function updateHistoryList() {
+      historyList.innerHTML = '';
+      
+      const chatIds = Object.keys(chats).sort((a, b) => 
+        new Date(chats[b].created) - new Date(chats[a].created)
+      );
+      
+      chatIds.forEach(chatId => {
+        const chat = chats[chatId];
+        const li = document.createElement('li');
+        li.className = `history-item ${chatId === currentChatId ? 'active' : ''}`;
+        li.textContent = chat.title;
+        li.onclick = () => switchToChat(chatId);
+        historyList.appendChild(li);
+      });
+    }
+
+    function clearCurrentChat() {
+      if (!currentChatId) return;
+      
+      if (confirm('Tem certeza que deseja limpar esta conversa?')) {
+        chats[currentChatId].messages = [];
+        loadChatMessages(currentChatId);
+        updateHistoryList();
+      }
+    }
+
+    function exportChat() {
+      if (!currentChatId || !chats[currentChatId] || !chats[currentChatId].messages) {
+        alert('Nenhuma conversa para exportar!');
+        return;
+      }
+      
+      const chat = chats[currentChatId];
+      let exportText = `CONVERSA OPTIVUSIA\n`;
+      exportText += `Título: ${chat.title}\n`;
+      exportText += `Data: ${new Date(chat.created).toLocaleString('pt-BR')}\n`;
+      exportText += `Modo: ${modeSelect.value}\n\n`;
+      exportText += `${'='.repeat(50)}\n\n`;
+      
+      chat.messages.forEach((msg, index) => {
+        const role = msg.role === 'user' ? 'USUÁRIO' : 'OPTIVUSIA';
+        const timestamp = new Date(msg.timestamp).toLocaleString('pt-BR');
+        exportText += `[${timestamp}] ${role}:\n${msg.content}\n\n`;
+        
+        if (msg.searchResults) {
+          exportText += `FONTES CONSULTADAS:\n`;
+          msg.searchResults.forEach(result => {
+            exportText += `- ${result.title}\n  ${result.snippet}\n\n`;
+          });
+        }
+      });
+      
+      const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `optivusia-${chat.title.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Global function for suggestions
+    window.sendSuggestion = function(text) {
+      input.value = text;
+      composer.dispatchEvent(new Event('submit'));
+    };
+
+    // Initialize app
+    init();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'972e8633023ef256',t:'MTc1NTgyNTM4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
