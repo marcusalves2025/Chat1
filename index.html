@@ -1,43 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat com IA</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu ChatGPT</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
+    #chat-box { height: 400px; overflow-y: auto; background: #fff; padding: 15px; border: 1px solid #ccc; }
+    .message { margin: 10px 0; padding: 8px 12px; border-radius: 8px; }
+    .user { background: #d1ffd6; text-align: right; }
+    .bot { background: #e1e1e1; text-align: left; }
+    #controls { display: flex; margin-top: 10px; }
+    #user-input { flex: 1; padding: 10px; }
+    #send-btn { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🤖 Chat com IA</h1>
-            <p>Converse com a inteligência artificial</p>
-        </header>
-        
-        <div class="chat-container">
-            <div id="chat-box" class="chat-box">
-                <div class="message bot">
-                    Olá! Sou sua assistente de IA. Como posso ajudá-lo hoje?
-                </div>
-            </div>
-            
-            <div class="input-container">
-                <input 
-                    type="text" 
-                    id="user-input" 
-                    placeholder="Digite sua mensagem aqui..."
-                    autocomplete="off"
-                >
-                <button id="send-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22,2 15,22 11,13 2,9"></polygon>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <script src="script.js"></script>
+  <h2 style="text-align:center">Meu ChatGPT</h2>
+  <div id="chat-box"></div>
+  <div id="controls">
+    <input type="text" id="user-input" placeholder="Digite sua mensagem...">
+    <button id="send-btn">Enviar</button>
+  </div>
+  <script src="app.js"></script>
 </body>
 </html>
-
